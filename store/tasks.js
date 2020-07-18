@@ -24,8 +24,8 @@ export const actions = {
     commit('DELETE_TASK', id)
   },
   async patchTask({commit}, payload) { //recibo por payload la nueva tarea
-    const {id,taskData} = payload
-    await axios.patch(`${API_URL}/tasks/${id}/`, taskData)
+    const {id,task} = payload
+    await axios.patch(`${API_URL}/tasks/${id}/`, task)
     commit('EDIT_TASK', payload)
   }
 }
@@ -41,10 +41,15 @@ export const mutations = {
     state.tasks.push(task)
   },
   EDIT_TASK(state,payload){
-    const {index,title} = payload //el payload recibe el index y el titleo
+    const {id,task} = payload //el payload recibe el index y el titleo
+
+    const index = state.tasks.findIndex((task)=>{
+      return task.id === id
+    })
+
     const updatedTask = { //la tarea a actualizar toma el estado cuyo indice va a actualizar y el titleo nuevo
       ...state.tasks[index],
-      title
+      ...task
     }
     state.tasks.splice(index,1,updatedTask) //elimina el elemnto a editar y agrega otro en su lugar
   }
@@ -56,8 +61,6 @@ export const mutations = {
 
     state.tasks.splice(index)
   },
-  TOGGLE_TASK(state,todo){
-    todo.done = !todo.done
-  }
+
 }
 /*-------------------------------------------END MUTATIONS-------------------------------------------------*/
